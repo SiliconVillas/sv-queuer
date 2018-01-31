@@ -15,7 +15,7 @@ class Api{
         return request
     }
     
-    static func login(username: String, password: String) -> URLRequest {
+    static func loginRequest(username: String, password: String) -> URLRequest {
         let url = URL(string: BASE_URL + "session")!
         var request = getBaseRequest(url: url)
         request.httpMethod = "POST"
@@ -23,20 +23,20 @@ class Api{
         return request
     }
     
-    static func getProjects(projectId: Int? = nil) -> URLRequest{
+    static func getProjectsRequest(projectId: Int? = nil) -> URLRequest{
         let url : URL = (projectId != nil) ? URL(string: PROJECTS_URL + "/\(projectId!)")! : URL(string: PROJECTS_URL)!
         let request = getBaseRequest(url: url)
         return request
     }
     
-    static func deleteProject(projectId: Int) -> URLRequest{
+    static func deleteProjectRequest(projectId: Int) -> URLRequest{
         let url : URL = URL(string: PROJECTS_URL + "/\(projectId)")!
         var request = getBaseRequest(url: url)
         request.httpMethod = "DELETE"
         return request
     }
     
-    static func addProject(projectName: String)-> URLRequest{
+    static func addProjectRequest(projectName: String)-> URLRequest{
         let url = URL(string: Api.PROJECTS_URL)!
         var request = getBaseRequest(url: url)
         request.httpMethod = "POST"
@@ -45,7 +45,7 @@ class Api{
         return request
     }
     
-    static func addTask(projectId: Int, taskName: String)  -> URLRequest{
+    static func addTaskRequest(projectId: Int, taskName: String)  -> URLRequest{
         let url = URL(string: PROJECTS_URL + "/" + String(projectId) + "/tasks")!
         var request = getBaseRequest(url: url)
         request.httpMethod="POST"
@@ -53,7 +53,7 @@ class Api{
         return request
     }
     
-    static func deleteTask(projectId: Int, taskId: Int) -> URLRequest{
+    static func deleteTaskRequest(projectId: Int, taskId: Int) -> URLRequest{
         let url : URL = URL(string: PROJECTS_URL + "/\(projectId)/tasks/\(taskId)")!
         var request = getBaseRequest(url: url)
         request.httpMethod = "DELETE"

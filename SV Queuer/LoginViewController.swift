@@ -13,7 +13,7 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginpressed(_ sender: Any) {
-        let request = Api.login(username: usernameField.text!, password: passwordField.text!)
+        let request = Api.loginRequest(username: usernameField.text!, password: passwordField.text!)
         handleLogin(request)
     }
     

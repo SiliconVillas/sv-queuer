@@ -1,6 +1,6 @@
 import UIKit
 
-class ProjectViewController: UIViewController , UITableViewDataSource, UITableViewDelegate{
+class ProjectViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
     
     @IBOutlet weak var tableView: UITableView!
     var project: Dictionary<String, AnyObject?>?
@@ -13,7 +13,7 @@ class ProjectViewController: UIViewController , UITableViewDataSource, UITableVi
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        let request = Api.getProjects(projectId: self.project!["id"]! as? Int)
+        let request = Api.getProjectsRequest(projectId: self.project!["id"]! as? Int)
         self.handleGetProject(request)
     }
     
@@ -32,7 +32,7 @@ class ProjectViewController: UIViewController , UITableViewDataSource, UITableVi
         vc.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
             vc.dismiss(animated: true, completion: nil)
             
-            let request = Api.addTask(projectId: self.project!["id"]! as! Int, taskName: vc.textFields![0].text!)
+            let request = Api.addTaskRequest(projectId: self.project!["id"]! as! Int, taskName: vc.textFields![0].text!)
             self.handleAddTask(request)
         }))
         
@@ -70,7 +70,7 @@ class ProjectViewController: UIViewController , UITableViewDataSource, UITableVi
             let selectedProjectId : Int = project!["id"] as! Int
             let selectedTask = ((project!["tasks"])! as! Array<Dictionary<String, AnyObject?>>)[indexPath.row]
             let selectedTaskId : Int = selectedTask["id"] as! Int
-            let deleteRequest = Api.deleteTask(projectId: selectedProjectId, taskId: selectedTaskId)
+            let deleteRequest = Api.deleteTaskRequest(projectId: selectedProjectId, taskId: selectedTaskId)
             self.handleDeleteTask(deleteRequest)
         }
     }
@@ -108,7 +108,7 @@ class ProjectViewController: UIViewController , UITableViewDataSource, UITableVi
                     let message = error.localizedDescription + "\nMaybe check your internet?"
                     self.view.makeToast(message, duration: 3.0, position: .center)
                 }
-                let request = Api.getProjects(projectId: self.project!["id"]! as? Int)
+                let request = Api.getProjectsRequest(projectId: self.project!["id"]! as? Int)
                 self.handleGetProject(request)
             }
         }).resume()
@@ -124,7 +124,7 @@ class ProjectViewController: UIViewController , UITableViewDataSource, UITableVi
                     message = error.localizedDescription + "\nMaybe check your internet?"
                 }
                 else{
-                    let projectRequest = Api.getProjects(projectId: self.project!["id"]! as? Int)
+                    let projectRequest = Api.getProjectsRequest(projectId: self.project!["id"]! as? Int)
                     self.handleGetProject(projectRequest)
                     message = "The task has been deleted."
                     self.tableView.reloadData()
