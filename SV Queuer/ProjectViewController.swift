@@ -1,19 +1,51 @@
 import UIKit
 
-class ProjectViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ProjectViewController: UIViewController, ProjectTableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
-    var projects: Array<Dictionary<String, AnyObject?>>?
-    var selProj: Dictionary<String, AnyObject?>?
+
+    let dataSource = ProjectTableView()
+    let viewModel = ProjectViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Projects"
-        tableView.dataSource = self
-        tableView.delegate = self
-        self.fillTable()
-        navigationItem.rightBarButtonItem=UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(ProjectViewController.promptProjCreate))
+        dataSource.delegate = self
+        tableView.dataSource = dataSource
+
+        self.initVM()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(ProjectViewController.promptProjCreate))
     }
     
+    func initVM() {
+        
+        viewModel.showAlertClosure = { [weak self] () in
+            DispatchQueue.main.async {
+                if let message = self?.viewModel.alertMessage {
+                    self?.showAlert( message )
+                }
+            }
+        }
+        
+        viewModel.reloadTableViewClosure = { [weak self] () in
+            DispatchQueue.main.async {
+                self?.dataSource.projects = self?.viewModel.projects
+                self?.tableView.reloadData()
+            }
+        }
+        
+    self.viewModel.initFetch()
+        
+    }
+   
+    func showAlert( _ message: String ) {
+        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
+        alert.addAction( UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    func didSelectGoToMainMenu(datasource: ProjectTableView) {
+       performSegue(withIdentifier: "viewproject", sender: self)
+    }
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -24,7 +56,7 @@ class ProjectViewController: UIViewController, UITableViewDataSource, UITableVie
         vc.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
             vc.dismiss(animated: true, completion: nil)
             
-            let request = HttpRequest.makeRequest(url: AppDelegate.PROJECTS_URL, httpMethod: HttpRequest.HttpMethod.POST, httpBody: ["project" : ["name": vc.textFields![0].text as AnyObject, "color": -13508189 as AnyObject]])
+            let request = HttpRequest.makeRequest(url: Constants.PROJECTS_URL, httpMethod: HttpRequest.HttpMethod.POST, httpBody: ["project" : ["name": vc.textFields![0].text as AnyObject, "color": -13508189 as AnyObject]])
             
             URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
                 DispatchQueue.main.async{
@@ -32,7 +64,7 @@ class ProjectViewController: UIViewController, UITableViewDataSource, UITableVie
                         let alertController = HttpRequest.getAlertConnection(title: "Ruh roh", message: error.localizedDescription + "\nMaybe check your internet?")
                         self.present(alertController, animated: true, completion: nil)
                     }
-                    self.fillTable()
+//                    self.fillTable()
                 }
             }).resume()
         }))
@@ -46,52 +78,15 @@ class ProjectViewController: UIViewController, UITableViewDataSource, UITableVie
         
         present(vc, animated: true, completion: nil)
     }
-    
-    func fillTable(){
-        let request = HttpRequest.makeRequest(url: AppDelegate.PROJECTS_URL , httpMethod: HttpRequest.HttpMethod.GET, httpBody: nil)
-        
-        URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
-            DispatchQueue.main.async{
-                if let error = optError {
-                     let alertController = HttpRequest.getAlertConnection(title: "Ruh roh", message: error.localizedDescription + "\nMaybe check your internet?")
-                    self.present(alertController, animated: true, completion: nil)
-                }
-                if let jsonData = data {
-                    self.projects = try! JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? Array<Dictionary<String, AnyObject?>>
-                    self.tableView.reloadData()
-                }
-            }
-        }).resume()
-    }
+
+
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "project")
-        cell?.textLabel?.text = (projects![indexPath.row])["name"]! as? String
-        return cell!
-    }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vC = segue.destination as? TaskViewController {
-            vC.project = selProj
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let count = projects?.count {
-            return count
-        } else {
-            return 0
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selProj = projects![indexPath.row];
-        tableView.deselectRow(at: indexPath, animated: true)
-        performSegue(withIdentifier: "viewproject", sender: self)
-    }
+
     
     
 }

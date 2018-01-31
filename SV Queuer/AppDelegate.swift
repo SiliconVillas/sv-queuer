@@ -2,10 +2,7 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    static let BASE_URL = "https://queuer-production.herokuapp.com/api/v1/"
-    static let PROJECTS_URL = BASE_URL + "projects"
-    static let SESSION_URL = BASE_URL + "session"
-
+    
     var window: UIWindow?
 
 

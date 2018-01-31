@@ -28,7 +28,7 @@ class TaskViewController: UIViewController , UITableViewDataSource, UITableViewD
         
         vc.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
             vc.dismiss(animated: true, completion: nil)
-            let request = HttpRequest.makeRequest(url: AppDelegate.PROJECTS_URL + "/" + String(self.project!["id"]! as! Int) + "/tasks", httpMethod: HttpRequest.HttpMethod.POST, httpBody: ["task" : ["name": vc.textFields![0].text as AnyObject]])
+            let request = HttpRequest.makeRequest(url: Constants.PROJECTS_URL + "/" + String(self.project!["id"]! as! Int) + "/tasks", httpMethod: HttpRequest.HttpMethod.POST, httpBody: ["task" : ["name": vc.textFields![0].text as AnyObject]])
             
             URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
                 DispatchQueue.main.async{
@@ -54,7 +54,7 @@ class TaskViewController: UIViewController , UITableViewDataSource, UITableViewD
     
     func fillTable(){
         
-        let request = HttpRequest.makeRequest(url: AppDelegate.PROJECTS_URL + "/" + String(self.project!["id"]! as! Int), httpMethod: HttpRequest.HttpMethod.GET, httpBody: nil)
+        let request = HttpRequest.makeRequest(url: Constants.PROJECTS_URL + "/" + String(self.project!["id"]! as! Int), httpMethod: HttpRequest.HttpMethod.GET, httpBody: nil)
         URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
             DispatchQueue.main.async{
                 if let error = optError {

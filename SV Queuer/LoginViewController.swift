@@ -14,7 +14,7 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginpressed(_ sender: Any) {
         
-        let request = HttpRequest.makeRequest(url: AppDelegate.SESSION_URL, httpMethod: HttpRequest.HttpMethod.POST, httpBody: ["username": usernameField.text, "password": passwordField.text])
+        let request = HttpRequest.makeRequest(url: Constants.SESSION_URL, httpMethod: HttpRequest.HttpMethod.POST, httpBody: ["username": usernameField.text, "password": passwordField.text])
         
         URLSession(configuration: URLSessionConfiguration.default).dataTask(with: request, completionHandler: { (data, response, optError) in
             DispatchQueue.main.async{
